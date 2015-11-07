@@ -16,10 +16,32 @@ my_list = []
 file_requested = "index.html"
 
 #sentence = ""
+addr = ""
+reply = ""
 
 sentence = "Hello, From Client"
 clientSocket = socket(AF_INET, SOCK_DGRAM)
-clientSocket.sendto(sentence, (serverName, serverPort))
+
+
+i = 0
+while i < 3:
+	try:
+		sentence = raw_input('Client : ')
+		clientSocket.sendto(sentence, (serverName, serverPort))         
+		reply, addr = clientSocket.recvfrom(1024)
+		print reply
+		i = i + 1
+		MSG = 'Enter your message to send here : '
+	except Exception, e:
+		raise e
+		break
+print "out..."
+		
+        
+
+
+
+#clientSocket.sendto(sentence, (serverName, serverPort))
 
 
 clientSocket.close()
