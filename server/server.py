@@ -48,11 +48,11 @@ while (i <= len(file_content)):
 	serverSocket.sendto(string , addr)
 
 i = i + ( len(file_content) - i )
-string = file_content[i : i+1000]
-string = unicode(string, 'utf-8')
+string = file_content[i : i + 1000]
+#string = unicode(string, 'utf-8')
 #string = string.encode('utf-8')
 serverSocket.sendto(string , addr)
 #print "exit"
 print i
-#serverSocket.sendto("*X*" , addr)
+serverSocket.sendto('uiowa' , addr)
 serverSocket.close()

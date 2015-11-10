@@ -13,7 +13,7 @@ serverPort = 14000
 
 newline = "\r\n\r\n"
 my_list = []
-file_requested = "index.html"#"John_Oliver_Quotations.mp4"
+file_requested = "1.mp3"#"John_Oliver_Quotations.mp4"
 
 #sentence = ""
 addr = ""
@@ -36,12 +36,14 @@ dirr = os.path.dirname(file_requested)
 output_file = open(file_requested, 'w')
 while 1:	
 	try:
-		if (reply != "*X*"):
+		if (reply != 'uiowa'):
 			#MSG = MSG + reply
+			output_file.write(reply)
+			MSG = MSG + reply
 			reply, addr = clientSocket.recvfrom(1000)
 			#print "_" + reply
 			#reply = bytes.decode(reply)
-			output_file.write(reply)
+
 		else:
 			break
 	except timeout:
@@ -60,6 +62,7 @@ output_file.close()
 #	except clientSocket.error:
 #		print "Error timeout..."
 print "out..."
+print str(len(MSG))
 		
         
 
