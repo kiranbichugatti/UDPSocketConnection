@@ -46,8 +46,16 @@ output_file = open(file_requested, 'w')
 output_file.write(reply)
 print "Receving %d bytes of data" % (len(reply))
 output_file.close()
-print "Recieved"
+
+#	except clientSocket.error:
+#		print "Error timeout..."
+print "out..."
 		
+        
+
+
+
 #clientSocket.sendto(sentence, (serverName, serverPort))
+
 
 clientSocket.close()

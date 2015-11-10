@@ -19,7 +19,7 @@ serverSocket.bind((serverName, serverPort))
 
 while True:
 	print "Server is ready to receive..."
-	MSG, addr = serverSocket.recvfrom(1000)
+	MSG, addr = serverSocket.recvfrom(100)
 	print "received message is : ", MSG
 	method = MSG.split(' ')[0]
 	my_file = MSG.split(' ')
