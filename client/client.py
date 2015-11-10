@@ -13,7 +13,7 @@ serverPort = 14000
 
 newline = "\r\n\r\n"
 my_list = []
-file_requested = "index.txt"
+file_requested = "index.html"#"John_Oliver_Quotations.mp4"
 
 #sentence = ""
 addr = ""
@@ -30,20 +30,31 @@ i = 0
 #	try:
 		#sentence = raw_input('Client : ')
 clientSocket.sendto(sentence, (serverName, serverPort))
-try:
-	reply, addr = clientSocket.recvfrom(1000)
-	#print reply
-	i = i + 1
-	MSG = 'Enter your message to send here : '
-except timeout:
-	print "time is out ..."
-	reply = "Nothing.."
-
+MSG = ""
+reply= ""
 dirr = os.path.dirname(file_requested)
+output_file = open(file_requested, 'w')
+while 1:	
+	try:
+		if (reply != "*X*"):
+			#MSG = MSG + reply
+			reply, addr = clientSocket.recvfrom(1000)
+			#print "_" + reply
+			#reply = bytes.decode(reply)
+			output_file.write(reply)
+		else:
+			break
+	except timeout:
+		print "time is out ..."
+		#print MSG
+		reply = "Nothing.."
+		break
+
+
 #print dirr
 #os.stat(dirr)
-output_file = open(file_requested, 'w')
-output_file.write(reply)
+
+
 output_file.close()
 
 #	except clientSocket.error:
