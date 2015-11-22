@@ -31,11 +31,12 @@ if (method == 'GET'):
 print "length is :" + str(len(file_content))
 size = len(file_content) 
 open_file.close()
-
+loop = 0
 done = 0
 i=0
 while (i <= len(file_content)):
 	#print i
+	loop = loop + 1
 	string = file_content[i : i+1000]
 	#string = string.decode('cp1252')
 	#string = unicode(string, errors='ignore')
@@ -47,6 +48,8 @@ while (i <= len(file_content)):
 	#print "Sending: " + string
 	serverSocket.sendto(string , addr)
 
+	#time.sleep(0.01)
+
 i = i + ( len(file_content) - i )
 string = file_content[i : i + 1000]
 #string = unicode(string, 'utf-8')
@@ -54,5 +57,6 @@ string = file_content[i : i + 1000]
 serverSocket.sendto(string , addr)
 #print "exit"
 print i
+print "loop is :", loop
 serverSocket.sendto('uiowa' , addr)
 serverSocket.close()
