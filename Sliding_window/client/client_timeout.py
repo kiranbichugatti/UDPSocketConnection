@@ -15,7 +15,7 @@ windowSize = 5
 newline = "\r\n\r\n"
 my_list = []
 seq = 0
-file_requested = "John_Oliver_Quotations.mp4"
+file_requested = "1.mp4"#"John_Oliver_Quotations.mp4"
 
 addr = ""
 reply = ""

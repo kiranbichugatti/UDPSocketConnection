@@ -7,6 +7,7 @@ import struct
 import thread
 import threading
 
+import copy
 
 
 serverName = '127.0.0.1'
@@ -14,6 +15,9 @@ serverPort = 14010
 windowSize = 5 # 0~4 = 5
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((serverName, serverPort))
+fi= ""
+dirr = os.path.dirname("Timer_report.txt")
+output_file = open("Timer_report_"+str(time.time())+"_.txt", 'w')
 
 
 def split_the_content(str, num):
@@ -28,13 +32,35 @@ def len_check(arr,num):
 	while len(arr) < (num + 1):
 		arr.append("asnobi")
 
+def report_time(seq,time,switch):
+	global fi
+	if (switch == "send"):
+		try:
+			time_report[seq] = [seq,time,0]
+		except IndexError:
+			time_report.append([seq,time,0])
+	if (switch == "receive"):
+		current = list(time_report[seq])
+		time_report[seq] = [current[0],current[1],time]
+		
+
+def printing_time(arr):
+	result = ""
+	for i in range(len(arr)):
+		
+		if(i > 0 ):
+			current = copy.deepcopy(arr[i])
+			result = result + str(current[0]) + " : " + str(current[2]-current[1]) +"\n"
+	return result
+
+
 print "Server is ready to receive..."
 MSG, addr = serverSocket.recvfrom(1017)
 print "received message is : ", MSG
 method = MSG.split(' ')[0]
 my_file = MSG.split(' ')
 my_file = my_file[1] 
-
+timer_holder = 0
 
 print "file is :" + my_file
 open_file = open(my_file,'rb')
@@ -46,14 +72,17 @@ content_array = []
 content_array = split_the_content(file_content,1000) # return an array basid on the content
 seq_chk = []
 time_out = []
+time_report = []
 pick =[] 
 def test_resend(str_):
 	serverSocket.settimeout(None)
 	#print "There is an Error with packet after ", str_
 	pck = int(str_) 
 	string = str(pck) + division_key + content_array[pck ]
-	print "Resending..", pck
+	#print "Resending..", pck
 	serverSocket.sendto(string , addr)
+	timer_holder = time.time()
+	report_time(pck,timer_holder,"send")
 	time_out.append([pck,time.time()])
 	#print "Lost pck has been sent"
 
@@ -72,6 +101,8 @@ for i in range (windowSize):
 	seq_chk[ACK]  = "XXX"
 
 	serverSocket.sendto(string , addr)
+	timer_holder = time.time()
+	report_time(ACK,timer_holder,"send")
 	time_out.append([ACK,time.time()])
 	nxt = nxt + 1
 
@@ -99,14 +130,16 @@ while True:
 		#print "Timeout is set to : ","[",pick[0],"]", (timee)
 		serverSocket.settimeout(timee)
 		ACK, addr = serverSocket.recvfrom(1018)
-		if (final == "yes"):
-			print "ACK = ", ACK
+
+		
 		serverSocket.settimeout(None)
 		time_out.pop(0)
 		#print "Timer:: ", time_out
 		
 		
 		ACK = get_seq_number_as_int(ACK,"_")
+		timer_holder = time.time()
+		report_time(ACK,timer_holder,"receive")
 		#print "Got this ACK: ", ACK
 		seq_chk[ACK] = str(ACK)
 		#print "seq_chk : ", seq_chk
@@ -116,6 +149,10 @@ while True:
 				string = str(nxt) + division_key + content_array[nxt]
 				#print "sending..", len(string)
 				serverSocket.sendto(string , addr)
+
+				timer_holder = time.time()
+				report_time(nxt,timer_holder,"send")
+
 				time_out.append([nxt,time.time()])
 
 				len_check(seq_chk,nxt)
@@ -125,19 +162,19 @@ while True:
 				nxt = nxt + 1
 			else:
 				if (seq_chk.count("XXX") > 0):
-					print "Resending XXX ",seq_chk.index("XXX")
+					#print "Resending XXX ",seq_chk.index("XXX")
 					test_resend(str(seq_chk.index("XXX")))
 					
 					#time_out.pop(0)
 				else:
-					print "final loop with END"
+					#print "final loop with END"
 					string = "0" + division_key + "end"
 					serverSocket.sendto(string , addr)
 					final = "yes"
 					time_out.append([pick[0]+1,time.time()])
 
 		else:
-			print "exit from while with the new conditon"
+			#print "exit from while with the new conditon"
 			if (seq_chk.count("XXX") == 0  ):
 				print "break.."
 				#break
@@ -152,7 +189,21 @@ while True:
 		continue
 
 #print "seq_chk : ", seq_chk
-print "the timer has: ", time_out
+
+print "******"
+
+
+time = time.strftime("%x")+"_"+time.strftime("%X")
+print len(time_report)
+string = ""
+string = printing_time(time_report)
+output_file.write(string)
+
+output_file.close()
+#time_report.tofile('yourfile.txt',sep=" ",format="%s")
+
+
+#print "the timer has: ", time_out
 print "Finished from while loop, File size", len(file_content)
 #print last , " :: ", len(content_array[size_of_array -1]), " :: ", len(content_array[size_of_array -2])
 
