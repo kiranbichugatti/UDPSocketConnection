@@ -74,6 +74,9 @@ seq_chk = []
 time_out = []
 time_report = []
 pick =[] 
+receive_thr = []
+one_se_calc = 0
+
 def test_resend(str_):
 	serverSocket.settimeout(None)
 	#print "There is an Error with packet after ", str_
@@ -109,6 +112,7 @@ for i in range (windowSize):
 
 print "Finished from FOR loop"
 final = "no"
+ti = time.time()
 
 while True:
 	try:
@@ -135,9 +139,16 @@ while True:
 		serverSocket.settimeout(None)
 		time_out.pop(0)
 		#print "Timer:: ", time_out
-		
-		
-		ACK = get_seq_number_as_int(ACK,"_")
+		b = ACK.split("_")
+		ACK = int(b[0])
+		pcklenght = b[1]
+		if((time.time() - ti) <= 1):
+			one_se_calc = one_se_calc + int(pcklenght)
+		else:
+			receive_thr.append(one_se_calc)
+			ti = time.time()
+			one_se_calc = 0
+		#ACK = get_seq_number_as_int(ACK,"_")
 		timer_holder = time.time()
 		report_time(ACK,timer_holder,"receive")
 		#print "Got this ACK: ", ACK
@@ -193,15 +204,26 @@ while True:
 print "******"
 
 
-time = time.strftime("%x")+"_"+time.strftime("%X")
+
 print len(time_report)
 string = ""
 string = printing_time(time_report)
 output_file.write(string)
 
 output_file.close()
-#time_report.tofile('yourfile.txt',sep=" ",format="%s")
+time_now = str(time.time())
+print time_now
+output_file2 = open("Throughput_"+time_now+"_.txt", 'w')
 
+string=""
+for i in range(len(receive_thr)):
+	string = string + str(receive_thr[i])+"\n"
+
+
+output_file2.write(string)
+output_file2.close()
+
+#time_report.tofile('yourfile.txt',sep=" ",format="%s")
 
 #print "the timer has: ", time_out
 print "Finished from while loop, File size", len(file_content)

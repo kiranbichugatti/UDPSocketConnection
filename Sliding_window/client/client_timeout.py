@@ -114,7 +114,7 @@ for i in range (windowSize):
 	test_recv()
 	continue
 
-#reply = ""	
+reply = MSG
 T = True
 a = True
 
@@ -125,7 +125,7 @@ while len(recived) != 0:
 
 		#print "recived is ,", recived
 		
-		clientSocket.sendto(str(recived[0])+"_", (serverName, serverPort))
+		clientSocket.sendto(str(recived[0])+"_"+str(len(reply)), (serverName, serverPort))
 		recived.pop(0)
 
 		if (reply != "end"):
