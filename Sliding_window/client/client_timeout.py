@@ -165,7 +165,7 @@ while len(recived) != 0:
 
 print "the code took: ", time.time() - startTime
 
-tst = get_str_arr(reciving_MSG)
+tst = get_str_arr(reciving_MSG[4:])
 output_file.write(tst)
 
 #print "Seq : ",seq_chk
